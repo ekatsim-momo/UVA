@@ -1,0 +1,68 @@
+#include<iostream>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+#include<string>
+using namespace std;
+int arr[20][20],brr[20][20];
+int main()
+{
+	int n,size,count=0;
+	scanf("%d", &n);
+	while (n--)
+	{
+		memset(arr, 0, sizeof(arr));
+		memset(brr, 0, sizeof(brr));
+		scanf("%d", &size);
+		for (int i = 1; i <= size; i++)
+			for (int j = 1; j <= size; j++)
+				scanf("%d", &arr[i][j]);
+		int num = (1 << size) - 1;
+		int nex = num;
+		int ans = -1;
+		while (nex>=0)
+		{
+			memcpy(brr, arr, sizeof(brr));
+			int s = 1, sum = 0;
+			int lin = num & nex;
+			while (lin)
+			{
+				if (lin % 2)
+				{
+					if (brr[1][s])
+						goto ne;
+					brr[1][s] = !brr[1][s];
+					sum++;
+				}
+				s++;
+				lin /= 2;
+			}
+			for (int i = 1; i < size; i++)
+			{
+				for (int j = 1; j <= size; j++)
+				{
+					if ((brr[i][j + 1] + brr[i][j - 1] + brr[i - 1][j] + brr[i + 1][j]) % 2)
+					{
+						if (brr[i + 1][j])
+							goto ne;
+						brr[i + 1][j] = 1;
+						sum++;
+					}
+				}
+			}
+			for (int j = 1; j <= size; j++)
+			{
+				if ((brr[size][j + 1] + brr[size][j - 1] + brr[size - 1][j]) % 2)
+					goto ne;
+			}
+			if (ans != -1)
+				ans = min(ans, sum);
+			else
+				ans = sum;
+		ne:
+			nex--;
+		}
+		printf("Case %d: %d\n", ++count,ans);
+	}
+	return 0;
+}
