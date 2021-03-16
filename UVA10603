@@ -1,0 +1,163 @@
+#include<cstdio>
+#include<cstring>
+#include<string>
+#include<iostream>
+#include<algorithm>
+#include<deque>
+#include<queue>
+#include<map>
+#include<vector>
+using namespace std;
+bool value[201][201][201];
+struct E
+{
+	int a, b, c,sum;
+}ans,lin,lin2;
+int sum = 1000000000, water = -1;
+int a, b, c, d;
+void bfs()
+{
+	int num,the;
+	queue<E>q;
+	q.push(ans);
+	while (!q.empty())
+	{
+		lin = q.front();
+		q.pop();
+		lin2 = lin;
+		if (value[lin.a][lin.b][lin.c])
+		{
+			int len;
+			value[lin.a][lin.b][lin.c] = false;
+			if (lin.c <= d || lin.b <= d || lin.a <= d)
+			{
+				if (lin.c <= d && lin.b <= d && lin.a <= d)
+				{
+					if (lin.b <= lin.c&&lin.a <= lin.c)
+						the = lin.c;
+					else if (lin.b <= lin.a&&lin.c <= lin.a)
+						the = lin.a;
+					else
+						the = lin.b;
+				}
+				else if (lin.c <= d && lin.b <= d)
+				{
+					if (lin.c <= lin.b)
+						the = lin.b;
+					else
+						the = lin.c;
+				}
+				else if (lin.c <= d && lin.a <= d)
+				{
+					if (lin.c <= lin.a)
+						the = lin.a;
+					else
+						the = lin.c;
+				}
+				else if (lin.b <= d && lin.a <= d)
+				{
+					if (lin.b <= lin.a)
+						the = lin.a;
+					else
+						the = lin.b;
+				}
+				else
+				{
+					if (lin.c <= d)
+						the = lin.c;
+					else if (lin.a <= d)
+						the = lin.a;
+					else
+						the = lin.b;
+				}
+			}
+			else
+				the = 0;
+			if (water < the)
+			{
+				sum = lin.sum;
+				water = the;
+			}
+			else if (water == the&&lin.sum<sum)
+			{
+				water = the;
+				sum = lin.sum;
+			}
+			if (water<d || lin.sum < sum)
+			{
+				if (lin.a != 0 && lin.c != c)
+				{
+					num = min(lin.a, c - lin.c);
+					lin.a -= num;
+					lin.c += num;
+					lin.sum += num;
+					q.push(lin);
+					lin = lin2;
+				}
+				if (lin.a != 0 && lin.b != b)
+				{
+					num = min(lin.a, b - lin.b);
+					lin.a -= num;
+					lin.b += num;
+					lin.sum += num;
+					q.push(lin);
+					lin = lin2;
+				}
+				if (lin.b != 0 && lin.a != a)
+				{
+					num = min(lin.b, a - lin.a);
+					lin.b -= num;
+					lin.a += num;
+					lin.sum += num;
+					q.push(lin);
+					lin = lin2;
+				}
+				if (lin.b != 0 && lin.c != c)
+				{
+					num = min(lin.b, c - lin.c);
+					lin.b -= num;
+					lin.c += num;
+					lin.sum += num;
+					q.push(lin);
+					lin = lin2;
+				}
+				if (lin.c != 0 && lin.a != a)
+				{
+					num = min(lin.c, a - lin.a);
+					lin.c -= num;
+					lin.a += num;
+					lin.sum += num;
+					q.push(lin);
+					lin = lin2;
+				}
+				if (lin.c != 0 && lin.b != b)
+				{
+					num = min(lin.c, b - lin.b);
+					lin.c -= num;
+					lin.b += num;
+					lin.sum += num;
+					q.push(lin);
+					lin = lin2;
+				}
+			}
+		}
+		else
+			continue;
+	}
+}
+int main()
+{
+	int n;
+	scanf("%d", &n);
+	while (n--)
+	{
+		sum = 1000000000, water = -1;
+		memset(value, true, sizeof(value));
+		ans.c = ans.b = ans.a =ans.sum=0;
+		scanf("%d%d%d%d", &a, &b, &c, &d);
+		ans.c = c;
+		bfs();
+		printf("%d %d\n", sum, water);
+	}
+	return 0;
+}
