@@ -1,0 +1,51 @@
+#include<cstdio>
+#include<cstring>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+int main()
+{
+    //freopen("test1","w",stdout);
+    int n,count=0;
+    long long s1,s2,v1,v2,num,sum,lin;
+    cin>>n;
+    while(n--)
+    {
+        sum=0;
+        cin>>num>>s1>>v1>>s2>>v2;
+        int a=num/s1,b=num/s2;
+        if(b<10000)
+        {
+            for(int i=0;i<=b;i++)
+                sum=max(sum,(num-i*s2)/s1*v1+i*v2);
+        }
+        else if(a<10000)
+        {
+            for(int i=0;i<=a;i++)
+                sum=max(sum,(num-i*s1)/s2*v2+i*v1);
+        }
+        else
+        {
+           if(s2*v1<=s1*v2)
+           {
+                   lin=s1*v2*(num/(s1*s2));
+                   num%=s1*s2;
+                   a=num/s1;
+                   b=num/s2;
+                     for(int i=0;i<=b;i++)
+                sum=max(sum,lin+(num-i*s2)/s1*v1+i*v2);
+           }
+           else
+           {
+                 lin=s2*v1*(num/(s1*s2));
+                   num%=s1*s2;
+                   a=num/s1;
+                   b=num/s2;
+                    for(int i=0;i<=a;i++)
+                sum=max(sum,lin+(num-i*s1)/s2*v2+i*v1);
+           }
+        }
+        printf("Case #%d: %lld\n",++count,sum);
+    }
+    return 0;
+}
