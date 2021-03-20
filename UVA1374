@@ -1,0 +1,86 @@
+#include<cstdio>
+#include<cstring>
+#include<iostream>
+#include<algorithm>
+using namespace std;
+struct E
+{
+	int last;
+	int arr[200];
+	bool yes[3000];
+	int mmax;
+}start;
+int mma = 3,ans,lin;
+int dfs(int n,E nex)
+{
+	int t = nex.last, mmax = nex.mmax;
+	for (int i = 1; i <= n; i++)
+	{
+		nex.arr[n + 1] = nex.arr[i] + t;
+		if (nex.yes[nex.arr[n + 1]])
+		{
+			nex.mmax = max(nex.arr[n + 1], mmax);
+			if ((nex.mmax << (mma - n)) < ans)
+				continue;
+			else if (nex.arr[n + 1] == ans)
+				return n;
+			nex.last = nex.arr[n + 1];
+			nex.yes[nex.arr[n + 1]] = false;
+			lin = dfs(n + 1, nex);
+			if (lin)
+				return lin;
+			nex.yes[nex.arr[n + 1]] = true;
+		}
+	}
+	for (int i = 1; i <= n; i++)
+	{
+		nex.arr[n + 1] = t-nex.arr[i];
+		if (nex.yes[nex.arr[n + 1]]&&nex.arr[n+1]>0)
+		{
+			if ((nex.mmax << (mma - n)) < ans)
+				continue;
+			else if (nex.arr[n + 1] == ans)
+				return n;
+			nex.last = nex.arr[n + 1];
+			nex.yes[nex.arr[n + 1]] = false;
+			lin = dfs(n + 1, nex);
+			if (lin)
+				return lin;
+			nex.yes[nex.arr[n + 1]] = true;
+		}
+	}
+	return false;
+}
+int main()
+{
+	int n=0;
+	freopen("test1", "w", stdout);
+	for (int j = 1; j <= 1000; j++)
+	{
+		ans = j;
+			if (ans == 1)
+				cout << 0 <<",";
+			else if (ans == 2)
+				cout << 1 << ",";
+			else
+			{
+				start.arr[1] = 1;
+				start.arr[2] = 2;
+				for (int i = 2;; i++)
+				{
+					mma = i;
+					start.last = 2;
+					memset(start.yes, true, sizeof(start.yes));
+					start.yes[1] = start.yes[2] = false;
+					start.mmax = 2;
+					n = dfs(2, start);
+					if (n)
+					{
+						cout << n << ",";
+						break;
+					}
+				}
+			}
+	}
+	return 0;
+}
