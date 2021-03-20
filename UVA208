@@ -1,0 +1,123 @@
+#include<cstdio>
+#include<cstring>
+#include<iostream>
+#include<algorithm>
+#include<vector>
+#include<queue>
+#include<string>
+#include<sstream>
+using namespace std;
+int n;
+struct E
+{
+	int value;
+	vector<int> s;
+	vector<int>to;
+	bool yes[220];
+}arr[220], lin, ll;
+int maxn;
+vector<vector<int>>brr;
+bool bfs()
+{
+	int num = 0;
+	queue<E>q;
+	bool vis[250];
+	memset(vis, true, sizeof(vis));
+	q.push(arr[1]);
+		while (!q.empty())
+		{
+			lin = q.front();
+			q.pop();
+			if (lin.value == n)
+				return true;
+			else
+			{
+				int size = lin.to.size();
+				ll = lin;
+				for (int i = 0; i < size; i++)
+				{
+					lin = ll;
+					lin.s.push_back(lin.to[i]);
+					vis[lin.value] = false;
+					lin.value = lin.to[i];
+					if (vis[lin.value])
+					{
+						lin.to = arr[lin.value].to;
+						q.push(lin);
+					}
+				}
+			}
+		}
+		return false;
+}
+void bfs2()
+{
+	int num = 0;
+	queue<E>q;
+	q.push(arr[1]);
+	while (!q.empty())
+	{
+		//num++;
+		lin = q.front();
+		q.pop();
+		if (lin.value == n)
+			brr.push_back(lin.s);
+		else
+		{
+			int size = lin.to.size();
+			ll = lin;
+			for (int i = 0; i < size; i++)
+			{
+				lin = ll;
+				lin.s.push_back(lin.to[i]);
+				lin.yes[lin.value] = false;
+				lin.value = lin.to[i];
+				if (lin.yes[lin.value])
+				{
+					lin.to = arr[lin.value].to;
+					q.push(lin);
+				}
+			}
+		}
+	}
+}
+int main()
+{
+	//freopen("test1", "w", stdout);
+	int a, b,count=0;
+	arr[1].s.push_back(1);
+	while (cin >> n)
+	{
+		brr.clear();
+		for (int i = 1; i <= 21; i++)
+		{
+			arr[i].value = i;
+			arr[i].to.clear();
+			memset(arr[i].yes, true, sizeof(arr[i].yes));
+		}
+		while (cin >> a >> b && a)
+		{
+			arr[a].to.push_back(b);
+			arr[b].to.push_back(a);
+		}
+		printf("CASE %d:\n", ++count);
+		if (bfs())
+		{
+			bfs2();
+			sort(brr.begin(), brr.end());
+			int size = brr.size();
+			for (int i = 0; i < size; i++)
+			{
+				int size2 = brr[i].size();
+				cout << brr[i][0];
+				for (int j = 1; j < size2; j++)
+					cout << " " << brr[i][j];
+				cout << endl;
+			}
+			printf("There are %d routes from the firestation to streetcorner %d.\n", size, n);
+		}
+		else
+			printf("There are 0 routes from the firestation to streetcorner %d.\n",n);
+	}
+	return 0;
+}
