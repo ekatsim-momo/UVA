@@ -1,0 +1,129 @@
+#include<cstdio>
+#include<cstring>
+#include<iostream>
+#include<algorithm>
+#include<queue>
+#include<string>
+#include<vector>
+#include<stack>
+using namespace std;
+char all[16][16];
+int r, c;
+vector<pair<int, int> >arr[10];
+bool yes[16][16];
+int a, b;
+string s;
+int ssize = 0,sum;
+bool dfs(int a, int b,string value,bool yes[16][16],int num)
+{
+	int judge = 0;
+	if (ssize == sum)
+	{
+		int size = value.size();
+		for (int i = 0; i < size; i++)
+		{
+			if (s[i] > value[i])
+				return false;
+			else if (s[i] == value[i])
+				continue;
+			else
+				break;
+		}
+	}
+		if (yes[a+1][b]&&a + 1 <= r && all[a + 1][b] != '#')
+		{
+			yes[a+1][b] = false;
+			if (dfs(a + 1, b, value + all[a + 1][b], yes, num + 1))
+				return true;
+			yes[a + 1][b] = true;
+			judge = 1;
+		}
+		if (yes[a][b+1]&&b + 1 <= c && all[a][b + 1] != '#')
+		{
+			yes[a][b + 1] = false;
+			if (dfs(a, b + 1, value + all[a][b + 1], yes, num + 1))
+				return true;
+			yes[a][b + 1] = true;
+			judge = 1;
+		}
+		if (all[a - 1][b] != '#'&&yes[a - 1][b])
+		{
+			yes[a - 1][b] = false;
+			if (dfs(a - 1, b, value + all[a - 1][b], yes, num + 1))
+				return true;
+			yes[a - 1][b] = true;
+			judge = 1;
+		}
+		if (yes[a][b-1] &&all[a][b - 1] != '#')
+		{
+			yes[a][b-1] = false;
+			if (dfs(a, b - 1, value + all[a][b - 1], yes, num + 1))
+				return true;
+			yes[a][b - 1] = true;
+			judge = 1;
+		}
+		if (judge == 0)
+		{
+			if (value.size() > ssize)
+			{
+				ssize = value.size();
+				s = value;
+			}
+			else if (value.size() == ssize && value > s)
+				s = value;
+			if (ssize == sum)
+			{
+				for (int i = 0; i < ssize; i++)
+				{
+					if (s[i] >= s[i + 1])
+						continue;
+					return false;
+				}
+				return true;
+			}
+		}
+		return false;
+}
+int main()
+{
+	memset(yes, true, sizeof(yes));
+	while (scanf("%d%d",&r,&c) && r)
+	{
+		for (int i = 0; i <= 9; i++)
+			arr[i].clear();
+		s.clear();
+		ssize = 0;
+		getchar();
+		memset(all, 0, sizeof(all));
+		sum = 0;
+		for (int j = 0; j <= c; j++)
+			all[0][j] = '#';
+		for (int i = 1; i <= r; i++)
+		{
+			all[i][0] = '#';
+			scanf("%s", &all[i][1]);
+		}
+		for (int i = 1; i <= r; i++)
+			for (int j = 1; j <= c; j++)
+				if (all[i][j] != '#')
+				{
+					arr[all[i][j] - '0'].push_back(make_pair(i, j));
+					sum++;
+				}
+		string ss;
+		for (int i = 9; i >= 0; i--)
+		{
+			int vsize = arr[i].size();
+			for (int j = 0; j < vsize; j++)
+			{
+				ss.clear();
+				ss.push_back(all[arr[i][j].first][arr[i][j].second]);
+				yes[arr[i][j].first][arr[i][j].second] = false;
+				dfs(arr[i][j].first, arr[i][j].second, ss, yes, 0);
+				yes[arr[i][j].first][arr[i][j].second] = true;
+			}
+		}
+		printf("%s\n", s.c_str());
+	}
+	return 0;
+}
