@@ -1,0 +1,308 @@
+#include<map>
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<vector>
+#include<string>
+#include<queue>
+#include<unordered_set>
+using namespace std;
+bool yes[18][18][18][18][18][18],yes2[18][18][18][18][18][18];
+char all[50][50];
+int n, r, c,k=0;
+struct E
+{
+	int ax, ay, bx, by, cx, cy;
+	bool operator==(E a)const
+	{
+		if (a.ax == ax && a.ay == ay && a.bx == bx && a.by == by && a.cx == cx && a.cy == cy)
+			return true;
+		return false;
+	}
+}lin, ans,la;
+queue<E>q, q2, last, last2;
+void read(int c, int r)
+{
+	for (int i = 0; i < r; i++)
+		gets(all[i]);
+	for (int i = 0; i < r; i++)
+		for (int j = 0; j < c; j++)
+		{
+			if (all[i][j] == 'A')
+			{
+				all[i][j] = ' ';
+				lin.ax = i;
+				lin.ay = j;
+			}
+			else if (all[i][j] == 'B')
+			{
+				all[i][j] = ' ';
+				lin.bx = i;
+				lin.by = j;
+			}
+			else if (all[i][j] == 'C')
+			{
+				all[i][j] = ' ';
+				lin.cx = i;
+				lin.cy = j;
+			}
+			else if (all[i][j] == 'a')
+			{
+				all[i][j] = ' ';
+				ans.ax = i;
+				ans.ay = j;
+			}
+			else if (all[i][j] == 'b')
+			{
+				all[i][j] = ' ';
+				ans.bx = i;
+				ans.by = j;
+			}
+			else if (all[i][j] == 'c')
+			{
+				all[i][j] = ' ';
+				ans.cx = i;
+				ans.cy = j;
+			}
+			if (all[i][j] > 'C'&&all[i][j] <= 'Z')
+				printf("-1\n");
+		}
+}
+bool ok(int n)
+{
+	if (n == 1)
+		return true;
+	if ((la.ax == lin.bx&&la.ay == lin.by&&la.bx==lin.ax&&la.by==lin.ay) || (la.ax == lin.cx&&la.ay == lin.cy&&la.cx == lin.ax&&la.cy == lin.ay) || (la.bx == lin.cx&&la.by == lin.cy&&la.cx == lin.bx&&la.cy == lin.by))
+		return false;
+	if ((lin.ax != lin.bx || lin.ay != lin.by) && (lin.ax != lin.cx || lin.ay != lin.cy) && (lin.cx != lin.bx || lin.cy != lin.by))
+		return true;
+	return false;
+}
+void p3(int r, int c, int g)
+{
+	if (g >= 3)
+	{
+		if (lin.cx > 0 && all[lin.cx - 1][lin.cy] == ' ')
+		{
+			lin.cx--;
+			if (ok(g))
+			{
+				if (k)
+				{
+					if (yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+					{
+						yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+						q2.push(lin);
+					}
+				}
+				else if (yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+				{
+					yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+					last2.push(lin);
+				}
+			}
+			lin.cx++;
+		}
+		if (lin.cy > 0 && all[lin.cx][lin.cy - 1] == ' ')
+		{
+			lin.cy--;
+			if (ok(g))
+			{
+				if (k)
+				{
+					if (yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+					{
+						yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+						q2.push(lin);
+					}
+				}
+				else if (yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+				{
+					yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+					last2.push(lin);
+				}
+			}
+			lin.cy++;
+		}
+		if (lin.cx < r - 1 && all[lin.cx + 1][lin.cy] == ' ')
+		{
+			lin.cx++;
+			if (ok(g))
+			{
+				if (k)
+				{
+					if (yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+					{
+						yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+						q2.push(lin);
+					}
+				}
+				else if (yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+				{
+					yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+					last2.push(lin);
+				}
+			}
+			lin.cx--;
+		}
+		if (lin.cy < c - 1 && all[lin.cx][lin.cy + 1] == ' ')
+		{
+			lin.cy++;
+			if (ok(g)||g==1)
+			{
+				if (k)
+				{
+					if (yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+					{
+						yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+						q2.push(lin);
+					}
+				}
+				else if (yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+				{
+					yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+					last2.push(lin);
+				}
+			}
+			lin.cy--;
+		}
+	}
+	if (ok(g))
+	{
+		if (k)
+		{
+			if (yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+			{
+				yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+				q2.push(lin);
+			}
+		}
+		else if (yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy])
+		{
+			yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+			last2.push(lin);
+		}
+	}
+}
+void p2(int r, int c, int g)
+{
+	if (g >= 2)
+	{
+		if (lin.bx > 0 && all[lin.bx - 1][lin.by] == ' ')
+		{
+			lin.bx--;
+			p3(r, c, g);
+			lin.bx++;
+		}
+		if (lin.by > 0 && all[lin.bx][lin.by - 1] == ' ')
+		{
+			lin.by--;
+				p3(r, c, g);
+			lin.by++;
+		}
+		if (lin.bx < r - 1 && all[lin.bx + 1][lin.by] == ' ')
+		{
+			lin.bx++;
+				p3(r, c, g);
+			lin.bx--;
+		}
+		if (lin.by < c - 1 && all[lin.bx][lin.by + 1] == ' ')
+		{
+			lin.by++;
+				p3(r, c, g);
+			lin.by--;
+		}
+	}
+	p3(r, c, g);
+}
+void p1(int r, int c, int g)
+{
+	if (lin.ax > 0 && all[lin.ax - 1][lin.ay] == ' ')
+	{
+		lin.ax--;
+		p2(r, c, g);
+		lin.ax++;
+	}
+	if (lin.ay > 0 && all[lin.ax][lin.ay - 1] == ' ')
+	{
+		lin.ay--;
+		p2(r, c, g);
+		lin.ay++;
+	}
+	if (lin.ax < r - 1 && all[lin.ax + 1][lin.ay] == ' ')
+	{
+		lin.ax++;
+			p2(r, c, g);
+		lin.ax--;
+	}
+	if (lin.ay < c - 1 && all[lin.ax][lin.ay + 1] == ' ')
+	{
+		lin.ay++;
+			p2(r, c, g);
+		lin.ay--;
+	}
+		p2(r, c, g);
+}
+int dbfs(int r, int c, int g)
+{
+	int num = 0;
+	q.push(lin);
+	last.push(ans);
+	yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] = false;
+	yes2[ans.ax][ans.ay][ans.bx][ans.by][ans.cx][ans.cy] = false;
+	while (1)
+	{
+		k = 1;
+		while (!q.empty())
+		{
+			lin = q.front();
+			q.pop();
+			if (yes2[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] == false)
+				return num;
+			la = lin;
+			p1(r, c, g);
+		}
+		q = q2;
+		num++;
+		while (!q2.empty())
+			q2.pop();
+		k = 0;
+		while (!last.empty())
+		{
+			lin = last.front();
+			last.pop();
+			if (yes[lin.ax][lin.ay][lin.bx][lin.by][lin.cx][lin.cy] == false)
+				return num;
+				la = lin;
+				p1(r, c, g);
+		}
+		num++;
+		last = last2;
+		while (!last2.empty())
+			last2.pop();
+	}
+}
+int main()
+{
+	//freopen("test1", "w", stdout);
+	while (scanf("%d%d%d", &c, &r, &n) && n)
+	{
+		lin.bx = lin.by = lin.cx = lin.cy = ans.bx = ans.by = ans.cx = ans.cy = 0;
+		while (!last2.empty())
+			last2.pop();
+		while (!last.empty())
+			last.pop();
+		memset(yes, true, sizeof(yes));
+		memset(yes2, true, sizeof(yes2));
+		memset(all, 0, sizeof(all));
+		getchar();
+		read(c, r);
+		while (!q2.empty())
+			q2.pop();
+		while (!q.empty())
+			q.pop();
+		printf("%d\n", dbfs(r, c, n));
+	}
+	return 0;
+}
