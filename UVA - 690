@@ -1,0 +1,87 @@
+#include<cstdio>
+#include<cstring>
+#include<algorithm>
+#include<string>
+#include<vector>
+#include<iostream>
+#include<queue>
+#include<stack>
+using namespace std;
+struct E
+{
+	int num = 1, st;
+	int yes[5];
+}lin, lin2;
+int first[5];
+struct COM
+{
+	bool operator()(E a, E b)const
+	{
+		return a.st > b.st;
+	}
+};
+int  n, mmin = 0x7fffffff;
+int bfs()
+{
+	priority_queue<E, vector<E>, COM>q;
+	q.push(lin);
+	while (lin.num!=10)
+	{
+		int ge=0,ok=0;
+		priority_queue<E, vector<E>, COM>next;
+		while (!q.empty() && ge < 800)
+		{
+			lin = q.top();
+			q.pop();
+			lin.num++;
+			lin2 = lin;
+			for (int i = lin2.st + 1; ge < 800 && i <= lin2.st+n; i++)
+			{
+				lin.st = i;
+				for (int j = 0; j <=4; j++)
+				{
+					lin.yes[j] >>=(i - lin2.st);
+					if (lin.yes[j]&first[j])
+						goto nex2;
+					lin.yes[j] |= first[j];
+				}
+				next.push(lin);
+				if (lin.num == 10)
+					mmin = min(lin.st + n, mmin);
+				ge++;
+			nex2:
+				lin = lin2;
+			}
+		}
+		q = next;
+	}
+	return mmin;
+}
+int main()
+{
+	//freopen("test1", "r", stdin);
+	//freopen("my", "w", stdout);
+	char ch;
+	while (scanf("%d", &n) && n)
+	{
+		mmin = 10 * n;
+		lin.num = 1;
+		memset(lin.yes, 0, sizeof(lin.yes));
+		for (int i = 0; i <= 4; i++)
+			for (int j = 1; j <= n;)
+			{
+				ch = getchar();
+				if (ch == 'X')
+				{
+					lin.yes[i] += (1 << j);
+					j++;
+				}
+				else if (ch == '.')
+					j++;
+			}
+		memcpy(first, lin.yes, sizeof(first));
+		lin.st = 0;
+		printf("%d\n", bfs());
+	}
+	return 0;
+}
