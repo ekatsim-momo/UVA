@@ -1,0 +1,190 @@
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <set>
+#include <queue>
+#include <string>
+#include <map>
+using namespace std;
+map<int, vector<int>>ban,ban2;
+int n;
+char f[5] = "nesw";
+int ff[5][2] = { {0,1},{1,0},{0,-1},{-1,0} };
+vector<string>a;
+vector<vector<string>>aa;
+struct E
+{
+	int num = 1, num2 = 0;
+	int x = 0, y = 0, lx = 0, rx = 0, ly = 0, ry = 0;
+	int last = 0, last2 = 0;
+	map<pair<int, int>, int>no;
+	string s;
+}lin;
+void bfs()
+{
+	int sum = (1 + n)*n / 4;
+	queue<E>q;
+	lin.last = 1;
+	q.push(lin);
+	lin.last = 3;
+	q.push(lin);
+	lin.last = 0;
+	q.push(lin);
+	lin.last = 2;
+	q.push(lin);
+	while (!q.empty())
+	{
+		lin = q.front();
+		q.pop();
+		lin.s.push_back(f[lin.last]);
+		lin.x += ff[lin.last][0] * lin.num;
+		lin.y += ff[lin.last][1] * lin.num;
+		lin.rx = max(lin.rx, lin.x);
+		lin.lx = min(lin.lx, lin.x);
+		lin.ry = max(lin.ry, lin.y);
+		lin.ly = min(lin.ly, lin.y);
+		if (lin.rx - lin.lx + lin.ry - lin.ly > sum||(lin.no.find(make_pair(lin.x,lin.y))!=lin.no.end()))
+			continue;
+		else if (lin.num == n && lin.x == lin.y&&lin.x == 0)
+		{
+			a.push_back(lin.s);
+			continue;
+		}
+		else if (lin.num == n || (lin.num == n - 1 && lin.x != 0 && lin.y != 0)||(lin.num==n-2&&(abs(lin.x)!=n&&abs(lin.y)!=n-1)&&(abs(lin.x)!=n-1&&abs(lin.y)!=n)))
+			continue;
+		lin.no[make_pair(lin.x, lin.y)] = 1;
+		lin.num++;
+		lin.last += 1;
+		lin.last %= 4;
+		q.push(lin);
+		lin.last += 2;
+		lin.last %= 4;
+		q.push(lin);
+	}
+}
+void rebfs()
+{
+	for (int i = 0; i <= 20; i++)
+	{
+		n = i;
+		a.clear();
+			lin.s.clear();
+			lin.no.clear();
+			lin.num = 1;
+			lin.x = lin.y = lin.lx = lin.rx = lin.ly = lin.ry = lin.last = 0;
+			bfs();
+		aa.push_back(a);
+	}
+}
+void dfs()
+{
+	int size = a.size();
+	int size2 = a[0].size();
+	for (int i = 0; i < size;i++)
+	{
+		lin.x = lin.y = 0;
+		for (int j = 0; j < size2; j++)
+		{
+			if (a[i][j] == 'e')
+			{
+				int sizey=ban2[lin.y].size();
+				for (int q = 0; q < sizey; q++)
+				{
+					if (ban2[lin.y][q] - lin.x <= j + 1 && ban2[lin.y][q] >= lin.x)
+					{
+						a.erase(a.begin() + i);
+						i--;
+						size--;
+						goto next;
+					}
+				}
+				lin.x += j + 1;
+			}
+			else if (a[i][j] == 'n')
+			{
+				int sizex = ban[lin.x].size();
+				for (int q = 0; q < sizex; q++)
+				{
+					if (ban[lin.x][q] - lin.y <= j + 1 && ban[lin.x][q] >= lin.y)
+					{
+						a.erase(a.begin() + i);
+						i--;
+						size--;
+						goto next;
+					}
+				}
+				lin.y += j + 1;
+			}
+			else if (a[i][j] == 's')
+			{
+				int sizex = ban[lin.x].size();
+				for (int q = 0; q < sizex; q++)
+				{
+					if (lin.y - ban[lin.x][q] <= j + 1 && ban[lin.x][q] <= lin.y)
+					{
+						a.erase(a.begin() + i);
+						i--;
+						size--;
+						goto next;
+					}
+				}
+				lin.y -= j + 1;
+			}
+			else if (a[i][j] == 'w')
+			{
+				int sizey = ban2[lin.y].size();
+				for (int q = 0; q < sizey; q++)
+				{
+					if (lin.x - ban2[lin.y][q] <= j + 1 && ban2[lin.y][q] <= lin.x)
+					{
+						a.erase(a.begin() + i);
+						i--;
+						size--;
+						goto next;
+					}
+				}
+				lin.x -= j + 1;
+			}
+		}
+	next:
+		if (i < size)
+			continue;
+		break;
+	}
+}
+int main()
+{
+	//freopen("test1", "r", stdin);
+	//freopen("my", "w", stdout);
+	int t,k,x,y;
+	rebfs();
+	scanf("%d", &t);
+	while (t--)
+	{
+		scanf("%d%d", &n, &k);
+		ban.clear();
+		ban2.clear();
+		for (int i = 1; i <= k; i++)
+		{
+			scanf("%d%d", &x, &y);
+			ban[x].push_back(y);
+			ban2[y].push_back(x);
+		}
+		a = aa[n];
+		if(k!=0&&(n==7||n==8||n==15||n==16))
+		dfs();
+		int ss = a.size();
+		sort(a.begin(), a.end());
+		if (ss != 0)
+		{
+			for (int i = 0; i < ss; i++)
+				cout << a[i] << endl;
+		}
+		printf("Found %d golygon(s).\n", ss);
+			cout << endl;
+	}
+	return 0;
+}
