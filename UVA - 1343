@@ -1,0 +1,83 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<vector>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<map>
+#include<ctime>
+using namespace std;
+int arr[25];
+int mmax = 0, ok = 0;
+int center[10] = { 7,8,9,12,13,16,17,18 };
+int f[8][8] = { {1,3,7,12,16,21,23},{2,4,9,13,18,22,24},{11,10,9,8,7,6,5},{20,19,18,17,16,15,14},{24,22,18,13,9,4,2},{23,21,16,12,7,3,1},{14,15,16,17,18,19,20},{5,6,7,8,9,10,11} };
+struct p
+{
+	string pass;
+	int num;
+	p(string s, int n) :pass(s), num(n) {}
+	bool operator<(const p a) const
+	{
+		return pass < a.pass;
+	}
+};
+vector<p>st;
+int h(int num)
+{
+	int n = 0;
+	for (int i = 0; i <= 7; i++)
+	{
+		if (arr[center[i]] != num)
+			n++;
+	}
+	return n;
+}
+bool dfs(int num, string a)
+{
+	int brr[25];
+	memcpy(brr, arr, sizeof(arr));
+	int need = min(min(h(1), h(2)), h(3));
+	if (need == 0)
+	{
+		st.push_back(p(a, arr[7]));
+		return true;
+	}
+	else if (need + num > mmax)
+		return false;
+	for (int i = 0; i <= 7; i++)
+	{
+		int lin = arr[f[i][0]];
+		for (int j = 0; j < 6; j++)
+			arr[f[i][j]] = arr[f[i][j + 1]];
+		arr[f[i][6]] = lin;
+		a.push_back('A' + i);
+		if (dfs(num + 1, a))
+			return true;
+		a.pop_back();
+		memcpy(arr, brr, sizeof(arr));
+	}
+	return false;
+}
+int main()
+{
+	//freopen("test1", "w", stdout);
+	string s;
+	while (scanf("%d", &arr[1]) && arr[1])
+	{
+		ok = 0;
+		st.clear();
+		for (int i = 2; i <= 24; i++)
+			scanf("%d", &arr[i]);
+		for (mmax = 0;; mmax++)
+		{
+			if (dfs(0, s))
+				break;
+		}
+		if (mmax != 0)
+			cout << st[0].pass << endl << st[0].num << endl;
+		else
+			cout << "No moves needed\n"<<st[0].num<<endl;
+	}
+	return 0;
+}
