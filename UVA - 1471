@@ -1,0 +1,46 @@
+#include <iostream>
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include<queue>
+#include<vector>
+using namespace std;
+int arr[200010], all[200010],add[200010],l[200010];
+int main()
+{
+	//freopen("test1", "w", stdout);
+	int n, t, num, mmax = 0;
+	scanf("%d", &t);
+	while (t--)
+	{
+		memset(arr, 0, sizeof(arr));
+		memset(all, 0, sizeof(all));
+		memset(add, 0, sizeof(add));
+		mmax = 1;
+		scanf("%d", &n);
+		for (int i = 1; i <= n; i++)
+		{
+			l[i] = 10000000000;
+			scanf("%d", &arr[i]);
+			if (arr[i] > arr[i - 1])
+				all[i] = all[i - 1] + 1;
+			else
+				all[i] = 1;
+		}
+		for (int i = n; i >= 0;i--)
+		{
+			if (arr[i] < arr[i + 1])
+				add[i] = add[i + 1] + 1;
+			else
+				add[i] = 1;
+		}
+		for (int i = 1; i <= n; i++)
+		{
+			int len = (lower_bound(l + 1, l + 1 + i, arr[i]) - (l + 1)) + add[i];
+			mmax = max(mmax, len);
+			l[all[i]] = min(l[all[i]], arr[i]);
+		}
+		cout << mmax << endl;
+	}
+	return 0;
+}
