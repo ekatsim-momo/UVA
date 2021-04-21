@@ -1,0 +1,93 @@
+#include<bits/stdc++.h>
+using namespace std;
+int arr[1000], brr[1000];
+int main()
+{
+	//freopen("test1", "w", stdout);
+	int n, num, gr;
+	cin >> n;
+	while (n--)
+	{
+		memset(arr, 0, sizeof(arr));
+		memset(brr, 0, sizeof(brr));
+		int sum = 0, mmax = 0;
+		cin >> num >> gr;
+		for (int i = 1; i <= num; i++)
+		{
+			cin >> arr[i];
+			sum += arr[i];
+			mmax = max(mmax, arr[i]);
+		}
+		int less, great, z;
+		less = sum / gr;
+		great = sum - gr + 1;
+		while (1)
+		{
+			int nsum = 0, gre = 0;
+			z = (great + less) / 2;
+			if (less == great)
+				break;
+			if (z < mmax)
+			{
+				if (less != z)
+					less = z;
+				else
+					less = z + 1;
+				continue;
+			}
+			for (int i = num; i >= 1; i--)
+			{
+				if (nsum + arr[i] > z)
+				{
+					gre++;
+					nsum = 0;
+				}
+				nsum += arr[i];
+			}
+			if (nsum != 0)
+				gre++;
+			if (gre <= gr)
+			{
+				if (great != z)
+					great = z;
+				else
+					great = z - 1;
+			}
+			else if (gre > gr && great != less)
+			{
+				if (less != z)
+					less = z;
+				else
+					less = z + 1;
+			}
+		}
+		int nsum = 0, lin = gr;
+		for (int i = num; i >= 1; i--)
+		{
+			if (nsum + arr[i] > z||lin==i+1)
+			{
+				brr[lin--] = nsum;
+				nsum = 0;
+			}
+			nsum += arr[i];
+		}
+		if (nsum != 0)
+			brr[1] = nsum;
+		lin = 1;
+		nsum = arr[1];
+		cout << arr[1];
+		for (int i = 2; i <= num; i++)
+		{
+			if (nsum == brr[lin])
+			{
+				lin++;
+				cout << " /";
+				nsum = 0;
+			}
+			cout << " " << arr[i];
+			nsum += arr[i];
+		}
+		cout << endl;
+	}
+	return 0;
+}
