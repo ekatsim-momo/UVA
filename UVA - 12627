@@ -3,10 +3,9 @@ using namespace std;
 long long a[33],num[50];
 int main()
 {
+    //freopen("test1","w",stdout);
     long long n,l,r,k,count=0;
-    memset(a,0,sizeof(a));
-    a[0]=1;
-    num[0]=1;
+    a[0]=num[0]=1;
     for(long long i=1; i<=30; i++)
     {
         a[i]=a[i-1]*3;
@@ -16,16 +15,13 @@ int main()
     while(n--)
     {
         scanf("%lld%lld%lld",&k,&l,&r);
-        long long sum=a[k],ce=0,nu=1;
+        long long sum=a[k],ce=k,nu=2;
         if(k!=0)
         {
-            nu=2;
             sum-=a[k-1]*2;
             if(l<=num[k]/2+1)
             {
                 l=num[k]/2+1-l;
-                while((1<<ce)<l)
-                    ce++;
                 while(ce>=0)
                 {
                     if((1<<ce)&l)
@@ -40,10 +36,7 @@ int main()
             {
                 sum-=a[k-1];
                 nu=1;
-                l-=num[k]/2;
-                 l=num[k]/2+1-l;
-                while((1<<ce)<l)
-                    ce++;
+                 l=num[k]+1-l;
                 while(ce>=0)
                 {
                     if((1<<ce)&l)
@@ -54,14 +47,11 @@ int main()
                     ce--;
                 }
             }
-            ce=0;
+            ce=k;
             nu=1;
             if(r>=num[k]/2)
             {
-                r-=num[k]/2;
-                r=num[k]/2+1-r;
-                while((1<<ce)<r-1)
-                    ce++;
+                r=num[k]+1-r;
                 while(ce>=0)
                 {
                     if((1<<ce)&r-1)
@@ -77,8 +67,6 @@ int main()
                 sum-=a[k-1];
                 nu=2;
                 r=num[k]/2+1-r;
-                while((1<<ce)<r-1)
-                    ce++;
                 while(ce>=0)
                 {
                     if((1<<ce)&r-1)
