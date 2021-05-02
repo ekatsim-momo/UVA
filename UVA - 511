@@ -1,0 +1,104 @@
+#include<bits/stdc++.h>
+using namespace std;
+pair<double, double>lin;
+struct mp
+{
+	string name;
+	double x1, y1, x2, y2;
+	mp(string s, double a1, double a2, double b1, double b2) :name(s), x1(a1), y1(a2), x2(b1), y2(b2) {}
+	bool operator<(const mp&a)const
+	{
+		if (fabs((a.y2 - a.y1)*(a.x2 - a.x1)) != fabs((y2 - y1)*(x2 - x1)))
+			return fabs((y2 - y1)*(x2 - x1)) > fabs((a.y2 - a.y1)*(a.x2 - a.x1));
+		else
+		{
+			double cenx1, ceny1, cenx2, ceny2;
+			cenx1 = (a.x2 + a.x1) / 2.0;
+			ceny1 = (a.y2 + a.y1) / 2.0;
+			cenx2 = (x2 + x1) / 2.0;
+			ceny2 = (y2 + y1) / 2.0;
+			if (fabs((lin.first - cenx1)*(lin.second - ceny1)) != fabs((lin.first - cenx2)*(lin.second - ceny2)))
+				return fabs((lin.first - cenx2)*(lin.second - ceny2)) < fabs((lin.first - cenx1)*(lin.second - ceny1));
+			else
+			{
+				cenx1 = (a.x2 - a.x1) / 2.0;
+				ceny1 = (a.y2 - a.y1) / 2.0;
+				cenx2 = (x2 - x1) / 2.0;
+				ceny2 = (y2 - y1) / 2.0;
+				if (fabs(ceny2*cenx1) != fabs(ceny1 * cenx2))
+				{
+					double len1 = fabs(ceny2 / cenx2 - 0.75), len2 = fabs(ceny1 / cenx1 - 0.75);
+					return len1 < len2;
+				}
+				else
+				{
+					if (max(a.x1,a.x2) - lin.first != max(x1,x2) - lin.first)
+						return max(x1, x2) - lin.first > max(a.x1, a.x2) - lin.first;
+					else
+						return min(x1,x2) < min(a.x1,a.x2);
+				}
+			}
+		}
+	}
+};
+vector<mp>m, ns;
+map<string, pair<double, double> >city;
+int main()
+{
+	int lev;
+	double a1, b1, a2, b2;
+	string s;
+	getline(cin, s);
+	while (cin >> s && s != "LOCATIONS")
+	{
+		cin >> a1 >> b1 >> a2 >> b2;
+		m.push_back(mp(s, a1, b1, a2, b2));
+	}
+	while (cin >> s && s != "REQUESTS")
+	{
+		cin >> a1 >> b1;
+		city[s] = make_pair(a1, b1);
+	}
+	while (cin >> s && s != "END")
+	{
+		cin >> lev;
+		cout << s << " at detail level " << lev;
+		if (city.find(s) == city.end())
+			cout << " unknown location\n";
+		else
+		{
+			lin = city[s];
+			ns.clear();
+			for (vector<mp>::iterator i = m.begin(); i != m.end(); i++)
+			{
+				if (max(i->x1,i->x2) >= lin.first&&max(i->y1,i->y2) >= lin.second&&min(i->x2,i->x1) <= lin.first&&min(i->y2,i->y1) <= lin.second)
+					ns.push_back(*i);
+			}
+			sort(ns.begin(), ns.end());
+			int size = ns.size(), count = 1;
+			if (lev == 1 && size >= 1)
+				cout << " using " << ns[0].name << endl;
+			else if (size > 1)
+			{
+				int i;
+				for (i = 1; i < size; i++)
+				{
+					if (fabs((ns[i].y2 - ns[i].y1)*(ns[i].x2 - ns[i].x1)) != fabs((ns[i - 1].y2 - ns[i - 1].y1)*(ns[i - 1].x2 - ns[i - 1].x1)))
+						count++;
+					if (count == lev)
+					{
+						cout << " using " << ns[i].name << endl;
+						break;
+					}
+				}
+				if (i == size)
+					cout << " no map at that detail level; using " << ns[size - 1].name << endl;
+			}
+			else if (size == 0)
+				cout << " no map contains that location\n";
+			else
+				cout << " no map at that detail level; using " << ns[size - 1].name << endl;
+		}
+	}
+	return 0;
+}
