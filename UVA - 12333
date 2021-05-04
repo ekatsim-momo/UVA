@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+map<vector<int>,int>m;
+vector<int>now,rez,num[100000];
+int main()
+{
+    int t;
+    char ch;
+    num[0].push_back(1),num[1].push_back(1);
+    m[num[0]]=0;
+    for(int i=2;i<100000;i++)
+    {
+        int nu=0,count=0,start=0,start2=0;
+        if(num[i-2].end()-num[i-2].begin()>51)
+            start2=start=num[i-2].end()-num[i-2].begin()-51;
+        if(num[i-1].end()-num[i-1].begin()<num[i-2].end()-num[i-2].begin())
+                start2--;
+        vector<int>::iterator jj=num[i-1].begin()+start2;
+        for(vector<int>::iterator j=num[i-2].begin()+start;;jj++)
+        {
+            if(j!=num[i-2].end()&&jj!=num[i-1].end())
+            {
+            num[i].push_back(((*jj)+(*j)+nu)%10);
+            nu=((*jj)+(*j)+nu)/10;
+            j++;
+            }
+            else if(jj!=num[i-1].end())
+            {
+                 num[i].push_back(((*jj)+nu)%10);
+                 nu=((*jj)+nu)/10;
+            }
+            else
+            {
+                if(nu!=0)
+                    num[i].push_back(nu);
+                break;
+            }
+        }
+        rez.clear();
+        vector<int>::iterator ii=num[i].end()-1;
+        for(;count<40;ii--,count++)
+        {
+            rez.push_back(*ii);
+            if(m.find(rez)==m.end())
+                m[rez]=i;
+            if(ii==num[i].begin())
+                    break;
+        }
+    }
+    scanf("%d",&t);
+    getchar();
+    for(int i=1;i<=t;i++)
+    {
+        now.clear();
+        while(ch=getchar(),ch!='\n')
+            now.push_back(ch-'0');
+            printf("Case #%d: ",i);
+        if(m.find(now)==m.end())
+            printf("-1\n");
+        else
+            printf("%d\n",m[now]);
+    }
+    return 0;
+}
