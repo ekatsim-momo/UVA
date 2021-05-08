@@ -1,0 +1,115 @@
+#include<bits/stdc++.h>
+using namespace std;
+int yes[110][110][110];
+set<int>lls[3];
+vector<int>ls[3];
+struct p
+{
+	int x0, y0, z0, x, y, z;
+}lin;
+vector<p>all;
+int s = 0, v = 0;
+struct loc
+{
+	int x, y, z;
+	loc(int a, int b, int c) :x(a), y(b), z(c) {}
+};
+loc lin2(loc(0, 0, 0));
+int f[6][3] = { {0,0,1},{0,0,-1},{0,1,0},{0,-1,0},{1,0,0},{-1,0,0} };
+void dfs(int lenx, int leny, int lenz)
+{
+	v = (ls[0][1] - ls[0][0])*(ls[1][1] - ls[1][0])*(ls[2][1] - ls[2][0]);
+	yes[0][0][0] = -1;
+	stack<loc>sta;
+	sta.push(lin2);
+	while (!sta.empty())
+	{
+		lin2 = sta.top();
+		sta.pop();
+			for (int i = 0; i <= 5; i++)
+			{
+				if (lin2.x + f[i][0] >= lenx-1 || lin2.y + f[i][1] >= leny-1 || lin2.z + f[i][2] >= lenz-1 || lin2.x + f[i][0] < 0 || lin2.y + f[i][1] < 0 || lin2.z + f[i][2] < 0)
+					continue;
+				else if (yes[lin2.x + f[i][0]][lin2.y + f[i][1]][lin2.z + f[i][2]] == -1)
+					continue;
+				else if (yes[lin2.x + f[i][0]][lin2.y + f[i][1]][lin2.z + f[i][2]] == 1)
+				{
+					if (i <= 1)
+						s += (ls[0][lin2.x + f[i][0]+1] - ls[0][lin2.x+f[i][0]])*(ls[1][lin2.y + f[i][1] + 1] - ls[1][lin2.y + f[i][1]]);
+					else if (i <= 3)
+						s += (ls[0][lin2.x + f[i][0] + 1] - ls[0][lin2.x + f[i][0]])*(ls[2][lin2.z + f[i][2] + 1] - ls[2][lin2.z + f[i][2]]);
+					else
+						s += (ls[1][lin2.y + f[i][1] + 1] - ls[1][lin2.y + f[i][1]])*(ls[2][lin2.z + f[i][2] + 1] - ls[2][lin2.z + f[i][2]]);
+				}
+				else if (yes[lin2.x + f[i][0]][lin2.y + f[i][1]][lin2.z + f[i][2]] == 0)
+				{
+					yes[lin2.x + f[i][0]][lin2.y + f[i][1]][lin2.z + f[i][2]] = -1;
+					//cout << lin2.x + f[i][0] << " " << lin2.y + f[i][1] << " " << lin2.z + f[i][2] << endl;
+					v += (ls[0][lin2.x + f[i][0] + 1] - ls[0][lin2.x + f[i][0]])*(ls[1][lin2.y + f[i][1] + 1] - ls[1][lin2.y + f[i][1]])*(ls[2][lin2.z + f[i][2] + 1] - ls[2][lin2.z + f[i][2]]);
+					sta.push(loc(lin2.x + f[i][0], lin2.y + f[i][1], lin2.z + f[i][2]));
+				}
+			}
+	}
+}
+int main()
+{
+	int t, num;
+	scanf("%d", &t);
+	while (t--)
+	{
+		s = v = 0;
+		lin2 = loc(0, 0, 0);
+		all.clear();
+		for (int i = 0; i <= 2; i++)
+		{
+			ls[i].clear();
+			lls[i].clear();
+		}
+		memset(yes, 0, sizeof(yes));
+		scanf("%d", &num);
+		lls[0].insert(0);
+		lls[0].insert(1001);
+		lls[1].insert(0);
+		lls[1].insert(1001);
+		lls[2].insert(0);
+		lls[2].insert(1001);
+		for (int i = 1; i <= num; i++)
+		{
+			scanf("%d%d%d%d%d%d", &lin.x0, &lin.y0, &lin.z0, &lin.x, &lin.y, &lin.z);
+			all.push_back(lin);
+			lls[0].insert(lin.x0);
+			lls[0].insert(lin.x0 + lin.x);
+			lls[1].insert(lin.y0);
+			lls[1].insert(lin.y0 + lin.y);
+			lls[2].insert(lin.z0);
+			lls[2].insert(lin.z0 + lin.z);
+		}
+		for (int nu = 0; nu <= 2; nu++)
+			for (set<int>::iterator i = lls[nu].begin(); i != lls[nu].end(); i++)
+				ls[nu].push_back(*i);
+		int lenx = ls[0].size(), leny = ls[1].size(), lenz = ls[2].size();
+		for (vector<p>::iterator i = all.begin(); i != all.end(); i++)
+		{
+			for (int a = 0; a < lenx; a++)
+			{
+				if (ls[0][a] >= i->x0&&ls[0][a] < i->x + i->x0)
+				{
+					for (int b = 0; b < leny; b++)
+					{
+						if (ls[1][b] >= i->y0&&ls[1][b] < i->y + i->y0)
+						{
+							for (int c = 0; c < lenz; c++)
+							{
+								if (ls[2][c] >= i->z0&&ls[2][c] < i->z + i->z0)
+									yes[a][b][c] = 1;
+							}
+						}
+					}
+				}
+			}
+		}
+		dfs(lenx, leny, lenz);
+		printf("%d %d\n", s, 1001 * 1001 * 1001 - v);
+	}
+	return 0;
+}
