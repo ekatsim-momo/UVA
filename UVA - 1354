@@ -1,0 +1,62 @@
+#include<bits/stdc++.h>
+using namespace std;
+int n;
+struct point
+{
+    int value;
+    double left,right;
+    point(int v,double a,double b):value(v),left(a),right(b) {}
+    bool operator<(const point&a)const
+    {
+        return value<a.value;
+    }
+};
+vector<vector<point>>all;
+vector<point>start;
+double ans=-1,leng;
+void dfs(int j,vector<point>a)
+{
+    vector<point>b=a;
+    if(j==1)
+    {
+        if(a[0].right-a[0].left<leng)
+            ans=max(ans,a[0].right-a[0].left);
+        return;
+    }
+    for(int i=1; i<j; i++)
+    {
+        a[i-1].left= min(a[i-1].left-(double)a[i].value/(a[i-1].value+a[i].value),a[i].left+(double)a[i-1].value/(a[i-1].value+a[i].value));
+        a[i-1].right=max(a[i].right+(double)a[i-1].value/(a[i-1].value+a[i].value),a[i-1].right-(double)a[i].value/(a[i-1].value+a[i].value));
+        a[i-1].value+=a[i].value;
+        a.erase(a.begin()+i);
+        dfs(j-1,a);
+        a=b;
+    }
+}
+int main()
+{
+    int t,num;
+    scanf("%d",&t);
+    while(t--)
+    {
+        ans=-1;
+        start.clear();
+        all.clear();
+        scanf("%lf%d",&leng,&n);
+        for(int i=1; i<=n; i++)
+        {
+            scanf("%d",&num);
+            start.push_back(point(num,0,0));
+        }
+        sort(start.begin(),start.end());
+        do{
+        all.push_back(start);
+        }
+        while(next_permutation(start.begin(),start.end()));
+        int size=all.size();
+        for(int j=0; j<size; j++)
+            dfs(n,all[j]);
+        cout<<setprecision(20)<<ans<<endl;
+    }
+    return 0;
+}
