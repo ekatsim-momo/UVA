@@ -1,0 +1,30 @@
+#include<bits/stdc++.h>
+using namespace std;
+vector<int>all;
+int main()
+{
+    int t,num,len,a,left,right,count;
+    cin>>t;
+    while(t--)
+    {
+        all.clear();
+        cin>>num>>len;
+        count=left=0;
+        right=num-1;
+        for(int i=1;i<=num;i++)
+        {
+            cin>>a;
+        all.push_back(a);
+        }
+        sort(all.begin(),all.end());
+        while(left<=right)
+        {
+            count++;
+            if(all[right]+all[left]<=len)
+                left++;
+            right--;
+        }
+        cout<<count<<endl<<(t?"\n":"");
+    }
+    return 0;
+}
