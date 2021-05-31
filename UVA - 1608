@@ -1,0 +1,101 @@
+#include<bits/stdc++.h>
+using namespace std;
+int all[200010], num[200010];
+unordered_map<int, int>m, loc;
+void bfs(int n)
+{
+	queue<pair<int, int>>q;
+	for (unordered_map<int, int>::iterator i = m.begin(); i != m.end(); i++)
+	{
+		if (i->second == 1)
+		{
+			if (loc[i->first] - 1 > 1)
+				q.push(make_pair(1, loc[i->first] - 1));
+			if (n > loc[i->first] + 1)
+				q.push(make_pair(loc[i->first] + 1, n));
+			break;
+		}
+	}
+	int sum = 0,count=0;
+	while (!q.empty())
+	{
+	    count++;
+		sum = 0;
+		m.clear();
+		loc.clear();
+		pair<int, int>a = q.front();
+		q.pop();
+		for (int i = a.first; i <= a.second; i++)
+		{
+			if (m.find(num[i]) != m.end())
+			{
+				if (m[num[i]]++ == 1)
+					sum--;
+			}
+			else
+			{
+				m[num[i]] = 1;
+				loc[num[i]] = i;
+				sum++;
+			}
+		}
+		if (!sum)
+		{
+			cout << "boring\n";
+			return;
+		}
+		else
+		{
+		    if(count>20)
+            {
+                cout << "non-boring\n";
+                return ;
+            }
+			for (unordered_map<int, int>::iterator i = m.begin(); i != m.end(); i++)
+			{
+				if (i->second == 1)
+				{
+					if (loc[i->first] - 1 > a.first)
+						q.push(make_pair(a.first, loc[i->first] - 1));
+					if (a.second > loc[i->first] + 1)
+						q.push(make_pair(loc[i->first] + 1, a.second));
+					break;
+				}
+			}
+		}
+	}
+	cout << "non-boring\n";
+}
+int main()
+{
+	//freopen("test1","w",stdout);
+	int t, n, sum;
+	scanf("%d", &t);
+	while (t--)
+	{
+		m.clear();
+		loc.clear();
+		sum = 0;
+		scanf("%d", &n);
+		for (int i = 1; i <= n; i++)
+		{
+			scanf("%d", &num[i]);
+			if (m.find(num[i]) != m.end())
+			{
+				if (m[num[i]]++ == 1)
+					sum--;
+			}
+			else
+			{
+				m[num[i]] = 1;
+				loc[num[i]] = i;
+				sum++;
+			}
+		}
+		if (!sum)
+			cout << "boring\n";
+		else
+			bfs(n);
+	}
+	return 0;
+}
