@@ -1,0 +1,112 @@
+#include<bits/stdc++.h>
+using namespace std;
+char all[1100][1100];
+int yes[1100];
+vector<int>black;
+bool find(int n)
+{
+    bool ok=false;
+    for(int i=1; i<=n; i++)
+    {
+        if(yes[i]==0)
+        {
+            if(i!=1)
+            ok=true;
+            yes[i]=1;
+        }
+    }
+    return ok;
+}
+void dele(int num,int it)
+{
+    if(all[num][it]=='0')
+    {
+        yes[num]=-1;
+        yes[it]=0;
+    }
+    else
+    {
+        yes[num]=0;
+        yes[it]=-1;
+    }
+}
+void solve(int n)
+{
+    while(find(n))
+    {
+        black.clear();
+        for(int i=2; i<=n; i++)
+        {
+            if(all[i][1]=='1'&&yes[i]==1)
+            {
+                int j;
+                for(j=2; j<=n; j++)
+                {
+                    if(all[i][j]=='0'&&j!=i&&yes[j]==1&&all[j][1]=='0')
+                    {
+                        printf("%d %d\n",i,j);
+                        yes[i]=-1;
+                        yes[j]=0;
+                        break;
+                    }
+                }
+                if(j==n+1)
+                    black.push_back(i);
+            }
+        }
+        int num;
+        for(vector<int>::iterator it=black.begin(); it!=black.end(); it++)
+        {
+            num=*it;
+            it++;
+            if(it!=black.end())
+            {
+                dele(num,*it);
+                printf("%d %d\n",num,*it);
+            }
+            else
+            {
+                for(int i=2;;i++)
+                {
+                    if(yes[i]==1&&num!=i)
+                    {
+                        dele(num,i);
+                        printf("%d %d\n",num,i);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+        bool block=false;
+        for(int i=1; i<=n; i++)
+        {
+            if(yes[i]==1&&!block)
+            {
+                block=!block;
+                printf("%d ",i);
+                num=i;
+            }
+            else if(yes[i]==1)
+            {
+                dele(num,i);
+                printf("%d\n",i);
+                block=!block;
+            }
+        }
+    }
+}
+int main()
+{
+    int n;
+    for(int i=1; i<=1024; i++)
+        all[i][0]=' ';
+    while(cin>>n)
+    {
+        memset(yes,0,sizeof(yes));
+        for(int i=1; i<=n; i++)
+            scanf("%s",&all[i][1]);
+        solve(n);
+    }
+    return 0;
+}
