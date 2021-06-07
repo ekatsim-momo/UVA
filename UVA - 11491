@@ -1,0 +1,31 @@
+#include<bits/stdc++.h>
+using namespace std;
+char s[100010];
+int main()
+{
+    int n,d,count,num,mmax=0,loc=0;
+    while(scanf("%d %d",&n,&d)&&n)
+    {
+        count=0;
+        scanf("%s",s);
+        mmax=0;
+        loc=0;
+        for(int i=0;i<n;i++)
+        {
+            if(mmax<s[i]-'0')
+            {
+                loc=i;
+                mmax=s[i]-'0';
+            }
+            if(i-count==d)
+            {
+             printf("%d",mmax);
+             mmax=-1;
+             i=loc;
+             count++;
+            }
+        }
+        cout<<endl;
+    }
+    return 0;
+}
