@@ -1,0 +1,54 @@
+#include<bits/stdc++.h>
+using namespace std;
+string s,s1;
+int num[3],num2[3];
+int main()
+{
+    int n,count=0,cas=0;
+    cin>>n;
+    while(n--)
+    {
+        count=0;
+        memset(num,0,sizeof(num));
+        memset(num2,0,sizeof(num2));
+        cin>>s>>s1;
+        int size=s.size();
+        for(int i=0; i<size; i++)
+            num[s1[i]-'0']++;
+        for(int i=0; i<size; i++)
+        {
+            if(s[i]!='?')
+                num2[s[i]-'0']++;
+            else
+                count++;
+        }
+        if(count+num2[0]<num[0])
+        {
+            cout<<"Case "<<++cas<<": "<<-1<<endl;
+            continue;
+        }
+        for(int i=0; i<size; i++)
+        {
+            if(s[i]=='?')
+            {
+                if(num2[s1[i]-'0']<num[s1[i]-'0']&&s1[i])
+                {
+                    num2[s1[i]-'0']++;
+                    s[i]=s1[i];
+                }
+                else
+                {
+                    num2[1-(s1[i]-'0')]++;
+                    s[i]='1'-s1[i]+'0';
+                }
+            }
+        }
+        for(int i=0; i<size; i++)
+        {
+            if(s[i]!=s1[i]&&s[i]=='0')
+                count++;
+        }
+        cout<<"Case "<<++cas<<": "<<count<<endl;
+    }
+    return 0;
+}
