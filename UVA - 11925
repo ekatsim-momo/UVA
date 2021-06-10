@@ -1,0 +1,62 @@
+#include<bits/stdc++.h>
+using namespace std;
+deque<int>num;
+stack<int> s;
+void dqclear()
+{
+    while(!num.empty())
+        num.pop_back();
+}
+bool pd(deque<int>lin)
+{
+    int n=1;
+    while(!lin.empty()&&lin.front()==n)
+    {
+        n++;
+        lin.pop_front();
+    }
+    if(lin.empty())
+        return false;
+    return true;
+}
+int main()
+{
+    int n,nu;
+    while(cin>>n&&n)
+    {
+        dqclear();
+        for(int i=1;i<=n;i++)
+        {
+            cin>>nu;
+            num.push_back(nu);
+        }
+        while(pd(num))
+        {
+            int a=num.front();
+            num.pop_front();
+            int a2=num.front();
+            num.pop_front();
+            if(a<a2||(a==n&&a2==1))
+            {
+                    s.push(2);
+                    num.push_front(a2);
+                    num.push_front(a);
+                    num.push_front(num.back());
+                    num.pop_back();
+            }
+            else
+            {
+                    s.push(1);
+                    num.push_front(a);
+                    num.push_front(a2);
+            }
+        }
+            while(!s.empty())
+            {
+                cout<<s.top();
+                s.pop();
+            }
+            cout<<endl;
+    }
+    return 0;
+}
