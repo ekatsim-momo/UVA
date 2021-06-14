@@ -1,0 +1,133 @@
+//法1：bfs
+
+#include<bits/stdc++.h>
+using namespace std;
+vector<int>edge[10000];
+int num[10000];
+bool judge(int val,int i)
+{
+    for(vector<int>::iterator j=edge[i].begin(); j!=edge[i].end(); j++)
+        if(num[*j]==val)
+            return false;
+    return true;
+}
+void bfs(int n,int k,int i)
+{
+    queue<int>q;
+    q.push(i);
+    while(!q.empty())
+    {
+        int nu=q.front();
+        q.pop();
+        for(vector<int>::iterator f=edge[nu].begin(); f!=edge[nu].end(); f++)
+        {
+            if(num[*f]==0)
+            {
+                for(int j=1; j<=k; j++)
+                {
+                    if(judge(j,*f))
+                    {
+                        num[*f]=j;
+                        q.push(*f);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+}
+int main()
+{
+    int n,m,a,b,k;
+    while(scanf("%d%d",&n,&m)!=-1)
+    {
+        k=0;
+        memset(num,0,sizeof(num));
+        for(int i=1; i<=n; i++)
+            edge[i].clear();
+        for(int i=1; i<=m; i++)
+        {
+            scanf("%d%d",&a,&b);
+            edge[a].push_back(b);
+            edge[b].push_back(a);
+            num[a]++;
+            num[b]++;
+            k=max(num[b],k);
+            k=max(num[a],k);
+        }
+        memset(num,0,sizeof(num));
+        if(k%2==0)
+            k++;
+            num[1]=1;
+        bfs(n,k,1);
+        printf("%d\n",k);
+        for(int i=1; i<=n; i++)
+            cout<<num[i]<<endl;
+        cout<<endl;
+    }
+    return 0;
+}
+
+
+
+//法2：dfs
+
+#include<bits/stdc++.h>
+using namespace std;
+vector<int>edge[10000];
+int num[10000],k;
+bool judge(int val,int i)
+{
+    for(vector<int>::iterator j=edge[i].begin(); j!=edge[i].end(); j++)
+            if(num[*j]==val)
+                return false;
+            return true;
+}
+void dfs(int nu)
+{
+   for(vector<int>::iterator i=edge[nu].begin();i!=edge[nu].end();i++)
+    {
+        if(num[*i]==0)
+        {
+       for(int j=1;j<=k;j++)
+        {
+            if(judge(j,*i))
+            {
+                num[*i]=j;
+                break;
+            }
+        }
+        dfs(*i);
+        }
+    }
+}
+int main()
+{
+    int n,m,a,b;
+    while(scanf("%d%d",&n,&m)!=-1)
+    {
+        k=0;
+        memset(num,0,sizeof(num));
+        for(int i=1; i<=n; i++)
+            edge[i].clear();
+        for(int i=1; i<=m; i++)
+        {
+            scanf("%d%d",&a,&b);
+            edge[a].push_back(b);
+            edge[b].push_back(a);
+            num[a]++;
+            num[b]++;
+            k=max(num[b],k);
+            k=max(num[a],k);
+        }
+        memset(num,0,sizeof(num));
+        if(k%2==0)
+            k++;
+        dfs(1);
+        printf("%d\n",k);
+        for(int i=1; i<=n; i++)
+            printf("%d\n",num[i]);
+        printf("\n");
+    }
+    return 0;
+}
