@@ -1,0 +1,71 @@
+#include<bits/stdc++.h>
+using namespace std;
+struct point
+{
+    int spd,ddl;
+    point(int a,int b):spd(a),ddl(b){}
+};
+struct com2
+{
+    bool operator()(const point&a,const point&b)
+    {
+       if(a.ddl!=b.ddl)
+        return a.ddl>b.ddl;
+        else
+            return a.spd>b.spd;
+    }
+};
+struct com
+{
+    bool operator()(const point&a,const point&b)
+    {
+       if(a.spd!=b.spd)
+        return a.spd<b.spd;
+        else
+            return a.ddl<b.ddl;
+    }
+};
+priority_queue<point,vector<point>,com2>q;
+priority_queue<point,vector<point>,com>p;
+int main()
+{
+    int t;
+    scanf("%d",&t);
+    while(t--)
+    {
+        while(!p.empty())
+    p.pop();
+    point now(0,0),time(0,0);
+    int n,ne,sp,last=0;
+    scanf("%d",&n);
+    for(int i=1;i<=n;i++)
+    {
+        scanf("%d%d",&sp,&ne);
+        q.push(point(sp,ne));
+    }
+    while(!q.empty())
+    {
+        now=q.top();
+        q.pop();
+        if(last+now.ddl>=now.spd)
+        {
+            last-=now.spd;
+            p.push(point(now.spd,now.ddl));
+        }
+        else if(!p.empty())
+        {
+            if(p.top().ddl<=now.ddl&&p.top().spd>=now.spd)
+            {
+                last+=p.top().spd;
+                p.pop();
+                p.push(point(now.spd,now.ddl));
+                last-=now.spd;
+            }
+        }
+    }
+    cout<<p.size()<<endl;
+    if(t)
+        cout<<endl;
+    }
+    return 0;
+}
