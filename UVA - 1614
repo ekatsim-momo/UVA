@@ -1,0 +1,45 @@
+#include<bits/stdc++.h>
+using namespace std;
+long long all[100010];
+bool yes[100010];
+int main()
+{
+    int num;
+    while(scanf("%d",&num)!=-1)
+    {
+        memset(yes,false,sizeof(yes));
+        long long sum=0;
+        for(int i=1;i<=num;i++)
+           {
+             scanf("%lld",&all[i]);
+             sum+=all[i];
+           }
+        if(sum%2)
+            cout<<"No\n";
+        else
+        {
+            cout<<"Yes\n";
+            sum/=2;
+            for(int i=num;i>=1;i--)
+            {
+                if(sum>=all[i])
+                {
+                    sum-=all[i];
+                    yes[i]=true;
+                }
+            }
+            if(yes[1]==false)
+                cout<<"-";
+            cout<<1;
+            for(int i=2;i<=num;i++)
+            {
+                if(yes[i]==false)
+                    cout<<" -1";
+                  else
+                    cout<<" 1";
+            }
+            cout<<endl;
+        }
+    }
+    return 0;
+}
