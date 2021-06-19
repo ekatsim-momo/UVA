@@ -1,0 +1,69 @@
+#include <bits/stdc++.h>
+using namespace std;
+int all[1000010],num[110];
+bool solve(int k)
+{
+    for(int i=1; i<=k; i++)
+    {
+        if(num[i]==0)
+            return false;
+    }
+    return true;
+}
+int main()
+{
+    int n,t,m,k,count=0,mmin;
+    scanf("%d",&t);
+    all[1]=1,all[2]=2,all[3]=3;
+    while(t--)
+    {
+        mmin=0x7fffffff;
+        scanf("%d %d %d",&n,&m,&k);
+        all[n+1]=all[n+2]=0;
+        memset(num,0,sizeof(num));
+        for(int i=4; i<=n; i++)
+            all[i]=(all[i-1]+all[i-2]+all[i-3])%m+1;
+        int right=1,left=1,last;
+        while(!solve(k)&&right<=n+1)
+        {
+            while(all[right]>k&&right<=n)
+                right++;
+            if(all[right]<=k)
+                num[all[right++]]++;
+        }
+        if(right>n+1)
+        {
+            printf("Case %d: sequence nai\n",++count);
+            continue;
+        }
+        while(solve(k))
+        {
+            while(all[left]>k)
+                left++;
+            num[all[left++]]--;
+        }
+        mmin=right-left+1;
+        while(right<=n)
+        {
+            while(!solve(k)&&right<=n)
+            {
+                while(all[right]>k&&right<=n)
+                    right++;
+                if(all[right]<=k)
+                    num[all[right++]]++;
+            }
+            if(right>n)
+                break;
+            while(solve(k))
+            {
+                while(all[left]>k)
+                    left++;
+                num[all[left++]]--;
+            }
+            mmin=min(mmin,right-left+1);
+        }
+        printf("Case %d: %d\n",++count,mmin);
+    }
+    return 0;
+}
+
