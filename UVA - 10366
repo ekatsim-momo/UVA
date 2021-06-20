@@ -1,0 +1,76 @@
+#include <bits/stdc++.h>
+using namespace std;
+vector<pair<int,int> >all,lef,rig;
+bool solve(bool which)
+{
+    bool yes=false;
+    int ans=0,mmax=0,ans2=0;
+     for(vector<pair<int,int> >::iterator i=all.begin();i!=all.end();i++)
+        {
+            ans+=mmax*2;
+            if(i->second*all[0].second>0)
+             {
+                 if(which&&i->first>=mmax)
+                    lef.push_back(*i);
+                 else if(!which&&i->first>=mmax)
+                    rig.push_back(*i);
+                    if(i->first>=mmax)
+                        ans2=ans;
+                 mmax=max(mmax,i->first);
+             }
+            else if(i->first==mmax&&!yes)
+             {
+              yes=true;
+              ans2+=ans;
+             }
+            else if(i->first>mmax)
+            {
+                if(yes)
+                cout<<min(ans,ans2)<<endl;
+                else
+                    cout<<ans<<endl;
+                return true;
+            }
+        }
+        return false;
+}
+int main()
+{
+    int leftx,rightx,val,mmax;
+    again:
+    while(cin>>leftx>>rightx&&leftx)
+    {
+        int ans=0,lans=0,rans=0;
+        lef.clear();
+        rig.clear();
+        all.clear();
+        for(int i=leftx;i<=rightx;i+=2)
+        {
+            cin>>val;
+            all.push_back(make_pair(val,i));
+        }
+        if(solve(true))
+            goto again;
+        reverse(all.begin(),all.end());
+        if(solve(false))
+            goto again;
+            reverse(lef.begin(),lef.end());
+            reverse(rig.begin(),rig.end());
+            int sizel=lef.size(),sizer=rig.size();
+            int l=1,r=1;
+            ans=lef[0].first*(rig[0].second-lef[0].second);
+                    while(r<sizer)
+                        {
+                            lans+=rig[r].first*(rig[r].second-rig[r-1].second);
+                            r++;
+                        }
+                    while(l<sizel)
+                        {
+                            rans+=lef[l].first*(-lef[l].second+lef[l-1].second);
+                            l++;
+                        }
+            cout<<ans+2*min(lans,rans)<<endl;
+    }
+    return 0;
+}
+
