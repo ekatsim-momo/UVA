@@ -1,0 +1,93 @@
+#include<bits/stdc++.h>
+using namespace std;
+int sign[1000010],val[1000010],now[1000010],cou[1000010],rem[1000010],num[1000010],cou2[1000010];
+bool judg(int n)
+{
+    int load=2;
+    for(int i=1;i<=n; i++)
+    {
+        if(now[i]==0)
+        {
+            cou2[val[load]]--;
+            if(val[load]>0&&cou2[val[load]]<0)
+                return false;
+                load++;
+        }
+        else
+        {
+            cou2[now[i]]++;
+            if(cou2[now[i]]>1)
+                return false;
+        }
+    }
+    return true;
+}
+int main()
+{
+    int t,n,m,count,count2;
+    bool judge=false;
+    scanf("%d",&t);
+    while(t--)
+    {
+        judge=false;
+        count=1;
+        count2=1;
+        scanf("%d%d",&m,&n);
+        memset(now,0,sizeof(now));
+        memset(val,0,sizeof(val));
+        memset(rem,0,sizeof(rem));
+        memset(num,0,sizeof(num));
+        for(int i=0; i<=1000000; i++)
+        {
+            cou2[i]=1;
+            sign[i]=i+1;
+        }
+        for(int i=1; i<=n; i++)
+        {
+            scanf("%d",&now[i]);
+             if(now[i]==0)
+                    count2++;
+            else
+            {
+            rem[i]=num[now[i]];
+            num[now[i]]=i;
+            }
+            cou[i]=count2;
+        }
+        for(int i=1; i<=n; i++)
+        {
+            if(now[i]!=0)
+            {
+                if(rem[i]==0)
+                {
+                    while(val[sign[count]])
+                        count++;
+                 val[sign[count]]=now[i];
+                 count++;
+                }
+                else
+                {
+                    while(val[sign[cou[rem[i]]]])
+                        sign[cou[rem[i]]]=sign[sign[cou[rem[i]]]];
+                val[sign[cou[rem[i]]]]=now[i];
+                if(sign[cou[rem[i]]]>count2)
+                {
+                    judge=true;
+                    break;
+                }
+                sign[cou[rem[i]]]=sign[sign[cou[rem[i]]]];
+                }
+            }
+        }
+        if(count>count2||judge||!judg(n))
+            cout<<"NO\n";
+        else
+        {
+            cout<<"YES\n";
+            for(int i=2; i<count2; i++)
+                cout<<val[i]<<" ";
+            cout<<val[count2]<<endl;
+        }
+    }
+    return 0;
+}
