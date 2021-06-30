@@ -1,0 +1,66 @@
+#include<bits/stdc++.h>
+using  namespace  std;
+bool num[1000010];
+struct laptop
+{
+    int left,right;
+    laptop(int a,int b):left(a),right(b) {}
+    bool operator<(const laptop&a)const
+    {
+        if(left!=a.left)
+            return left<a.left;
+        else
+            return right<a.right;
+    }
+};
+vector<laptop>all;
+int main()
+{
+    int t,mmax,ans,flag;
+    scanf("%d",&t);
+    while(t--)
+    {
+        ans=mmax=0;
+        memset(num,true,sizeof(num));
+        all.clear();
+        int n,left,right;
+        scanf("%d",&n);
+        for(int i=1; i<=n; i++)
+        {
+            scanf("%d%d",&left,&right);
+            all.push_back(laptop(left,right));
+        }
+        sort(all.begin(),all.end());
+        for(int i=0; i<n; i++)
+        {
+            if(mmax!=0&&all[i].left<=mmax&&all[i].right>mmax)
+            {
+                num[mmax+1]=false;
+                mmax++;
+            }
+            else if(num[all[i].right])
+            {
+                mmax=max(mmax,all[i].right);
+                num[all[i].right]=false;
+            }
+            else
+            {
+                int now=all[i].right;
+                while(!num[now]&&now>=all[i].left)
+                    now--;
+                num[now]=false;
+            }
+        }
+        int start=0;
+        while(num[start])
+            start++;
+        while(start<mmax)
+        {
+            if(num[start]!=num[start+1])
+                ans++;
+            start++;
+        }
+        cout<<ans/2<<endl;
+    }
+    return 0;
+}
