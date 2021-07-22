@@ -1,0 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
+struct ang
+{
+    long long l,s,h;
+    ang(long long a,long long b,long long c):l(max(a,b)),s(min(a,b)),h(c) {}
+    bool operator<(ang a)const
+    {
+        return (long long)l*s<(long long)a.l*a.s;
+    }
+};
+long long mmax[100],n;
+vector<ang>edge;
+void dfs(long long start,long long num,long long sum)
+{
+    for(long long i=num-1; i>=0; i--)
+    {
+        if(edge[i].l<edge[num].l&&edge[i].s<edge[num].s)
+            mmax[start]=max(mmax[start],sum+mmax[i]);
+    }
+    mmax[start]=max(mmax[start],sum);
+}
+int main()
+{
+    long long a,b,c,count=0;
+    while(cin>>n&&n)
+    {
+        edge.clear();
+        memset(mmax,0,sizeof(mmax));
+        for(long long i=1; i<=n; i++)
+        {
+            cin>>a>>b>>c;
+            edge.push_back(ang(a,b,c));
+            edge.push_back(ang(a,c,b));
+            edge.push_back(ang(b,c,a));
+        }
+        sort(edge.begin(),edge.end());
+        for(long long i=0; i<=3*n-1; i++)
+            dfs(i,i,edge[i].h);
+        for(int i=0; i<3*n; i++)
+            mmax[3*n]=max(mmax[i],mmax[3*n]);
+        cout<<"Case "<<++count<<": maximum height = "<<mmax[3*n]<<endl;
+    }
+    return 0;
+}
+
