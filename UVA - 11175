@@ -1,0 +1,58 @@
+#include <bits/stdc++.h>
+using namespace std;
+set<int>hx[500],bhx[500],first,second;
+bool edge[500][500];
+int main()
+{
+    bool flag;
+    int n,m,k,from,to,count=0;
+    cin>>n;
+    while(n--)
+    {
+        flag=true;
+        for(int i=0; i<=499; i++)
+        {
+            bhx[i].clear();
+            hx[i].clear();
+        }
+        memset(edge,false,sizeof(edge));
+        cin>>m>>k;
+        for(int i=1; i<=k; i++)
+        {
+            cin>>from>>to;
+            hx[to].insert(from);
+            bhx[from].insert(to);
+            edge[from][to]=true;
+        }
+        for(int i=0; i<=m; i++)
+        {
+            first.clear();
+            second.clear();
+            for(set<int>::iterator j=hx[i].begin(); j!=hx[i].end(); j++)
+            {
+                first.insert(*j);
+                for(set<int>::iterator t=bhx[*j].begin(); t!=bhx[*j].end(); t++)
+                    second.insert(*t);
+            }
+            for(set<int>::iterator j=first.begin(); j!=first.end(); j++)
+            {
+                for(set<int>::iterator t=second.begin(); t!=second.end(); t++)
+                {
+                    if(!edge[*j][*t])
+                    {
+                        flag=false;
+                        goto end;
+                    }
+                }
+            }
+        }
+end:
+        printf("Case #%d: ",++count);
+        if(flag)
+            cout<<"Yes\n";
+        else
+            cout<<"No\n";
+    }
+    return 0;
+}
+
