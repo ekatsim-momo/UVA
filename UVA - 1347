@@ -1,0 +1,53 @@
+#include <bits/stdc++.h>
+using namespace std;
+double distance(pair<int,int>f,pair<int,int>s)
+{
+    return sqrt((f.first-s.first)*(f.first-s.first)+(f.second-s.second)*(f.second-s.second));
+}
+vector<pair<int,int>>edge;
+double all[1005][1005];
+void dfs(int num)
+{
+   for(int i=0;i<num-1;i++)
+   {
+   all[num][i]=all[num-1][i]+distance(edge[num-1],edge[num]);
+   all[i][num]=all[num][i];
+   }
+   for(int i=0;i<num-1;i++)
+   all[num][num-1]=min(all[num][num-1],all[i][num-1]+distance(edge[i],edge[num]));
+    all[num-1][num]=all[num][num-1];
+}
+int main()
+{
+   // freopen("test1","w",stdout);
+    double ans;
+    int n;
+    pair<int,int>now;
+    while(cin>>n)
+    {
+        ans=0x7fffffff;
+        edge.clear();
+        for(int i=0;i<n;i++)
+        {
+            for(int j=0;j<=n;j++)
+                all[i][j]=0x7fffffff;
+            cin>>now.first>>now.second;
+            edge.push_back(now);
+        }
+        for(int j=0;j<=n;j++)
+            all[n][j]=0x7fffffff;
+        all[0][0]=0;
+        all[0][1]=all[1][0]=distance(edge[0],edge[1]);
+        for(int i=1;i<n;i++)
+            dfs(i);
+            for(int i=0;i<n-1;i++)
+            {
+                all[i][n]=all[i][n-1]+distance(edge[n-1],edge[i]);
+                all[n][i]=all[n-1][i]+distance(edge[n-1],edge[i]);
+                ans=min(ans,all[i][n]);
+                ans=min(ans,all[n][i]);
+            }
+        printf("%.2lf\n",ans);
+    }
+    return 0;
+}
