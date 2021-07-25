@@ -1,0 +1,138 @@
+#include <bits/stdc++.h>
+using namespace std;
+int bmap[10][10],ans[10][10];
+char line[10][10],f[5]="\\/";
+int n;
+bool hx[10][10];
+bool bfs(int x,int y)
+{
+    queue<pair<int,int>>Q;
+    int startx=x,starty=y;
+    Q.push(make_pair(x,y));
+    while(!Q.empty())
+    {
+        pair<int,int>now=Q.front();
+        Q.pop();
+        if(now.first==startx&&now.second==starty-1)
+            return true;
+        hx[now.first][now.second]=false;
+        x=now.first,y=now.second;
+        if(line[x][y]=='\\')
+        {
+            if(hx[x-1][y-1]&&line[x-1][y-1]=='\\')
+                Q.push(make_pair(x-1,y-1));
+            if(hx[x-1][y]&&line[x-1][y]=='/')
+                Q.push(make_pair(x-1,y));
+            if(hx[x][y-1]&&line[x][y-1]=='/')
+               Q.push(make_pair(x,y-1));
+            if(hx[x][y+1]&&line[x][y+1]=='/')
+               Q.push(make_pair(x,y+1));
+            if(hx[x+1][y+1]&&line[x+1][y+1]=='\\')
+               Q.push(make_pair(x+1,y+1));
+            if(hx[x+1][y]&&line[x+1][y]=='/')
+               Q.push(make_pair(x+1,y));
+        }
+        else if(line[x][y]=='/')
+        {
+                if(hx[x-1][y]&&line[x-1][y]=='\\')
+                   Q.push(make_pair(x-1,y));
+                if(hx[x-1][y+1]&&line[x-1][y+1]=='/')
+                   Q.push(make_pair(x-1,y+1));
+                if(hx[x][y+1]&&line[x][y+1]=='\\')
+                   Q.push(make_pair(x,y+1));
+                if((x!=startx||y!=starty)&&hx[x][y-1]&&line[x][y-1]=='\\')
+                   Q.push(make_pair(x,y-1));
+                if(hx[x+1][y-1]&&line[x+1][y-1]=='/')
+                   Q.push(make_pair(x+1,y-1));
+                if(hx[x+1][y]&&line[x+1][y]=='\\')
+                   Q.push(make_pair(x+1,y));
+        }
+    }
+    return false;
+}
+bool dfs(int x,int y)
+{
+    if(bmap[x][y-1]!=ans[x][y-1]&&ans[x][y-1]!=-1)
+        return false;
+    memset(hx,true,sizeof(hx));
+    if(y>2&&line[x][y-2]=='\\'&&line[x][y-1]=='/'&&bfs(x,y-1))
+        return false;
+    if(y==n+1)
+    {
+        if(bmap[x][y]!=ans[x][y]&&ans[x][y]!=-1)
+            return false;
+        x++;
+        y=1;
+    }
+    if(x==n+1)
+    {
+        for(int i=1; i<=n+1; i++)
+        {
+            if(bmap[x][i]!=ans[x][i]&&ans[x][i]!=-1)
+                return false;
+        }
+        return true;
+    }
+    for(int i=0; i<=1; i++)
+    {
+        line[x][y]=f[i];
+        if(i%2==0)
+        {
+            bmap[x][y]++;
+            bmap[x+1][y+1]++;
+            if(dfs(x,y+1))
+                return true;
+            line[x][y]=' ';
+            bmap[x][y]--;
+            bmap[x+1][y+1]--;
+        }
+        else
+        {
+            bmap[x+1][y]++;
+            bmap[x][y+1]++;
+            if(dfs(x,y+1))
+                return true;
+            line[x][y]=' ';
+            bmap[x+1][y]--;
+            bmap[x][y+1]--;
+        }
+    }
+    return false;
+}
+int main()
+{
+    char ch;
+    int T;
+    cin>>T;
+    while(T--)
+    {
+        cin>>n;
+        memset(bmap,0,sizeof(bmap));
+        memset(line,0,sizeof(line));
+        memset(ans,-1,sizeof(ans));
+        getchar();
+        for(int j=1; j<=n+1; j++)
+        {
+            for(int i=1; i<=n+1; i++)
+            {
+                ch=getchar();
+                if(ch=='.')
+                {
+                    ans[j][i]=-1;
+                }
+                else
+                    ans[j][i]=ch-'0';
+            }
+            getchar();
+        }
+        dfs(1,1);
+for(int i=1; i<=n; i++)
+        {
+            for(int j=1; j<=n; j++)
+                printf("%c",line[i][j]);
+            cout<<endl;
+        }
+    }
+    return 0;
+}
+
