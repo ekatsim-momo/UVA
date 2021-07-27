@@ -1,0 +1,122 @@
+#include <bits/stdc++.h>
+using namespace std;
+long long num[10];
+vector<string>edge;
+queue<char>S;
+void dfs(int n,int ddl,string s,bool flag)
+{
+    if(n==ddl+1)
+    {
+        edge.push_back(s);
+        return ;
+    }
+    string ss;
+    for(int i=1;i<=4;i++)
+    {
+        if(i==1&&(num[n-1]!=0||flag))
+        {
+            ss=s;
+            ss.push_back(num[n]+'0');
+            dfs(n+1,ddl,ss,true);
+        }
+        else if(i==2)
+        {
+            ss=s;
+            ss+="*";
+            ss.push_back(num[n]+'0');
+            dfs(n+1,ddl,ss,false);
+        }
+        else if(i==3)
+        {
+           ss=s;
+            ss+="+";
+            ss.push_back(num[n]+'0');
+            dfs(n+1,ddl,ss,false);
+        }
+        else if(i==4)
+        {
+            ss=s;
+            ss+="-";
+            ss.push_back(num[n]+'0');
+            dfs(n+1,ddl,ss,false);
+        }
+    }
+}
+int main()
+{
+    bool yes=false;
+    int ans=0,count=0;
+    char ch;
+    while(ch=getchar(),ch!='=')
+    {
+        printf("Problem %d\n",++count);
+        yes=false;
+        memset(num,0,sizeof(num));
+        edge.clear();
+        int i=0;
+        num[i++]=ch-'0';
+        while(ch=getchar(),ch!='=')
+            num[i++]=ch-'0';
+            string s;
+            s.push_back(num[0]+'0');
+            dfs(1,i-1,s,false);
+            //cout<<i-1<<endl;
+            sort(edge.begin(),edge.end());
+            for(vector<string>::iterator i=edge.begin();i!=edge.end();i++)
+                {
+                  ans=0;
+                  memset(num,0,sizeof(num));
+                  int size=i->size(),now=0;
+                  //cout<<size<<endl;
+                  for(int j=0;j<size;j++)
+                  {
+                      if((*i)[j]-'0'>=0&&(*i)[j]-'0'<=9)
+                      {
+                        num[now]*=10;
+                        num[now]+=(*i)[j]-'0';
+                      }
+                      else
+                       {
+                           S.push((*i)[j]);
+                           now++;
+                       }
+                  }
+                  if(S.empty())
+                    continue;
+                  for(int i1=0;i1<now;i1++)
+                  {
+                      ch=S.front();
+                      S.pop();
+                      if(ch!='*')
+                        S.push(ch);
+                      else
+                      {
+                          num[i1]*=num[i1+1];
+                          for(int j=i1+1;j<now;j++)
+                            num[j]=num[j+1];
+                          now--;
+                          i1--;
+                      }
+                  }
+                  ans=num[0];
+                  for(int i1=1;i1<=now;i1++)
+                  {
+                      ch=S.front();
+                      S.pop();
+                      if(ch=='+')
+                        ans+=num[i1];
+                      else
+                          ans-=num[i1];
+                  }
+                  if(ans==2000)
+                    {
+                        yes=true;
+                        cout<<"  "<<*i<<"="<<endl;
+                    }
+                }
+                if(!yes)
+                    cout<<"  IMPOSSIBLE\n";
+            getchar();
+    }
+    return 0;
+}
